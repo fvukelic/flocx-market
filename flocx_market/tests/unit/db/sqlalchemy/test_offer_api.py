@@ -8,13 +8,13 @@ from sqlalchemy.exc import IntegrityError
 
 now = datetime.datetime.utcnow()
 test_offer_data = dict(
-    marketplace_date_created=now,
     provider_id='2345',
     creator_id='3456',
+    marketplace_date_created=now,
+    status='available',
     server_id='4567',
     start_time=now,
     end_time=now,
-    status='available',
     server_config={'foo': 'bar'},
     cost=0.0,
 )
@@ -29,12 +29,12 @@ def test_offer_create(app, db, session):
 
 
 def test_offer_create_invalid(app, db, session):
-    data = dict(test_offer_data)
-    del data['provider_id']
-    offer = OfferApi(**data)
+    del test_offer_data['provider_id']
+    offer = OfferApi(**test_offer_data)
 
     with pytest.raises(IntegrityError):
         offer.save_to_db()
+    test_offer_data['provider_id'] = '2345'
 
 
 def test_offer_delete(app, db, session):
